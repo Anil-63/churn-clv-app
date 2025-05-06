@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📊 Customer Churn & CLV Dashboard")
+st.title("Customer Churn & CLV Dashboard")
 
 # Load predictions from final_output.csv
 @st.cache_data
