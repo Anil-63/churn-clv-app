@@ -28,9 +28,8 @@ row = data.loc[data["Customer_Id"] == cust].iloc[0]
 col1, col2, col3 = st.columns(3)
 col1.metric("Churn Probability", f"{row['Churn_Prob']:.1%}")
 col2.metric("Predicted CLV",     f"${row['Predicted_CLV']:.2f}")
-col3.metric("Expected Loss",      f"${row['ExpectedLoss']:.2f}")
+col3.metric("Expected Loss",     f"${row['ExpectedLoss']:.2f}")
 
 st.markdown(
-    f"**Actual Churn Label:** {row['Churn']}  \n"
     f"**Recommended Action:** **{row['Action']}**"
 )
