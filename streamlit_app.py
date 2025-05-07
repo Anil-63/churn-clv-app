@@ -111,3 +111,30 @@ with tab4:
 # Footer
 st.markdown("---")
 st.caption("Created by Anil,Abhi,Rupesh,Venu")
+
+
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_gmail_email(to_email, subject, body):
+    from_email = "your_email@gmail.com"
+    app_password = "your_app_password_here"
+
+    message = MIMEMultipart()
+    message["From"] = from_email
+    message["To"] = to_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(from_email, app_password)
+        server.send_message(message)
+        server.quit()
+        return "✅ Email sent successfully!"
+    except Exception as e:
+        return f"❌ Error: {e}"
+
