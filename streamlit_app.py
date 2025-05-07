@@ -71,6 +71,31 @@ with tab3:
     else:
         cust_id = st.selectbox("Select Customer ID", filtered_data["Customer_Id"].sort_values().unique())
         row = filtered_data[filtered_data["Customer_Id"] == cust_id].iloc[0]
+st.subheader("📬 Send Retention Email")
+
+default_message = f"""
+Hi Customer {int(row['Customer_Id'])},
+
+We noticed your churn probability is {row['Churn_Prob']:.1%}, and we'd love to keep you with us!
+
+Your predicted CLV is ${row['Predicted_CLV']:.2f}, and you're very important to us.
+
+Let us know how we can assist or improve your experience.
+
+Warm regards,  
+Customer Success Team
+"""
+
+recipient_email = st.text_input("Recipient Email", placeholder="example@email.com")
+custom_message = st.text_area("Email Message", value=default_message, height=200)
+
+if st.button("📧 Send Email"):
+    status = send_gmail_email(
+        recipient_email,
+        "💡 We'd love to retain you!",
+        custom_message
+    )
+    st.success(status)
 
         st.markdown(f"🎯 **Action:** `{row['Action']}`")
         col1, col2, col3, col4 = st.columns(4)
