@@ -12,7 +12,7 @@ def load_data():
 
 data = load_data()
 
-# Customer selection
+# Select customer
 cust = st.selectbox("Select Customer ID", data["Customer_Id"].sort_values().unique())
 row = data.loc[data["Customer_Id"] == cust].iloc[0]
 
@@ -28,16 +28,26 @@ st.markdown(f"**🧠 Recommended Action:** `{row['Action']}`")
 clv_percentile = np.round(np.sum(data['Predicted_CLV'] < row['Predicted_CLV']) / len(data) * 100, 1)
 st.metric("CLV Percentile Rank", f"{clv_percentile}th")
 
-# Progress bar
+# Churn probability progress bar
 st.subheader("📉 Churn Probability Progress")
 st.progress(float(row["Churn_Prob"]))
 
-# Histogram: CLV Distribution
+# CLV Histogram with selected customer marked
 st.subheader("📈 Where This Customer Falls (CLV Distribution)")
-fig, ax = plt.subplots(figsize=(8, 2))
-ax.hist(data["Predicted_CLV"], bins=50, color="skyblue", edgecolor="black")
-ax.axvline(row["Predicted_CLV"], color="red", linestyle="--", linewidth=2, label="Selected Customer")
-ax.set_xlabel("Predicted CLV")
-ax.set_yticks([])
-ax.legend()
-st.pyplot(fig)
+fig1, ax1 = plt.subplots(figsize=(8, 2))
+ax1.hist(data["Predicted_CLV"], bins=50, color="skyblue", edgecolor="black")
+ax1.axvline(row["Predicted_CLV"], color="red", linestyle="--", linewidth=2, label="Selected Customer")
+ax1.set_xlabel("Predicted CLV")
+ax1.set_yticks([])
+ax1.legend()
+st.pyplot(fig1)
+
+# Churn probability histogram with customer highlighted
+st.subheader("📉 Where This Customer Falls (Churn Probability Distribution)")
+fig2, ax2 = plt.subplots(figsize=(8, 2))
+ax2.hist(data["Churn_Prob"], bins=30, color="salmon", edgecolor="black")
+ax2.axvline(row["Churn_Prob"], color="blue", linestyle="--", linewidth=2, label="Selected Customer")
+ax2.set_xlabel("Churn Probability")
+ax2.set_yticks([])
+ax2.legend()
+st.pyplot(fig2)
