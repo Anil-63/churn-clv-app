@@ -5,12 +5,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
-# Load email credentials
+# Load email credentials from .env
 load_dotenv()
 from_email = os.getenv("EMAIL_ADDRESS")
 app_password = os.getenv("APP_PASSWORD")
 
-# Email template function
+# Email template
 def send_promotional_email(to_email, customer_id, clv_value):
     subject = "🌟 Special Offer Just for You!"
 
@@ -48,19 +48,18 @@ Your E-Commerce Team
 # Load data
 df = pd.read_csv("final_outputs.csv")
 
-# Filter by churn probability and valid email
-target_customers = df[
-    (df["Churn_Prob"] >= 0.60) &
-    (df["Email"].notna()) &
-    (df["Email"].str.contains("@"))
-]
+# Filter customers with churn ≥ 60% AND valid email
+target_customers = df[df["Churn_Prob"] >= 0.60].copy()
+target_customers = target_customers.dropna(subset=["Email"])
 
-print(f"📬 Found {len(target_customers)} customers with valid emails to send.")
-
-# Loop and send (limit to avoid mistakes during demo)
+# Loop and send email only to valid emails
 for _, row in target_customers.iterrows():
-    send_promotional_email(
-        to_email=row["Email"],
-        customer_id=row["Customer_Id"],
-        clv_value=row["Predicted_CLV"]
-    )
+    email = str(row["Email"]).strip()
+    if email and "@" in email:
+        send_promotional_email(
+            to_email=email,
+            customer_id=row["Customer_Id"],
+            clv_value=row["Predicted_CLV"]
+        )
+    else:
+        print(f"⚠️ Skipping invalid email: {email}")
