@@ -4,6 +4,4 @@ numpy
 matplotlib
 seaborn
 plotly
-smtplib
-email
 python-dotenv
