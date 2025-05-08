@@ -5,15 +5,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
-# Load email credentials
+# Load credentials from .env
 load_dotenv()
 from_email = os.getenv("EMAIL_ADDRESS")
 app_password = os.getenv("APP_PASSWORD")
 
-# Email template function
+# Email template
 def send_promotional_email(to_email, customer_id, clv_value):
     subject = "🌟 Special Offer Just for You!"
-
     body = f"""
 Hi Customer #{int(customer_id)},
 
@@ -28,7 +27,6 @@ Let’s make your next shopping experience even better.
 Best regards,  
 Your E-Commerce Team
 """
-
     message = MIMEMultipart()
     message["From"] = from_email
     message["To"] = to_email
@@ -45,16 +43,27 @@ Your E-Commerce Team
     except Exception as e:
         print(f"❌ Failed to send to {to_email}: {e}")
 
-# Load customers from CSV
+# Load data
 df = pd.read_csv("final_outputs.csv")
 
-# Filter by churn probability
+# Filter: Only high-churn customers (≥ 0.60)
 target_customers = df[df["Churn_Prob"] >= 0.60]
 
-# Loop and send
+# Limit sending: Adjust here if needed
+MAX_EMAILS = 10
+sent = 0
+
 for _, row in target_customers.iterrows():
-    send_promotional_email(
-        to_email=row["Email"],
-        customer_id=row["Customer_Id"],
-        clv_value=row["Predicted_CLV"]
-    )
+    email = row.get("Email")
+    if pd.notna(email):
+        send_promotional_email(
+            to_email=email,
+            customer_id=row["Customer_Id"],
+            clv_value=row["Predicted_CLV"]
+        )
+        sent += 1
+        if sent >= MAX_EMAILS:
+            print("🚫 Limit reached. Stopping email loop.")
+            break
+    else:
+        print(f"⚠️ Skipped (no email): Customer ID {row['Customer_Id']}")
