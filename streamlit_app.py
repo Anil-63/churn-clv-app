@@ -10,7 +10,7 @@ st.title("📊 Customer Churn & CLV Dashboard")
 # Load data
 @st.cache_data
 def load_data():
-    return pd.read_csv("final_output.csv")
+    return pd.read_csv("final_outputs.csv")
 
 data = load_data()
 
